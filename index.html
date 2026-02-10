@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Conflitos Eternos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="favicom.png"type="image/png"> 
+
+<style>
+/* ================= RESET ================= */
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+/* ================= VAR ================= */
+:root{
+  --red:#ff0000;
+  --dark:#000;
+  --dark2:#0a0a0a;
+}
+
+/* ================= BODY ================= */
+body{
+  font-family:Arial, sans-serif;
+  color:#fff;
+  background:
+    linear-gradient(rgba(0,0,0,.88),rgba(0,0,0,.88)),
+    url("Imagens/background.jpg") center/cover fixed;
+  overflow-x:hidden;
+}
+
+/* ================= LOADER ================= */
+#loader{
+  position:fixed; inset:0;
+  background:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+#loader span{
+  color:var(--red);
+  font-size:2rem;
+  animation:pulse 1.5s infinite;
+}
+@keyframes pulse{
+  0%{opacity:.3}
+  50%{opacity:1}
+  100%{opacity:.3}
+}
+
+/* ================= NAV ================= */
+nav{
+  position:fixed;
+  top:0;width:100%;
+  background:rgba(0,0,0,.9);
+  padding:15px;
+  display:flex;
+  justify-content:center;
+  gap:30px;
+  z-index:100;
+}
+nav a{
+  color:var(--red);
+  text-decoration:none;
+  font-weight:bold;
+  position:relative;
+}
+nav a.active::after,
+nav a:hover::after{
+  content:"";
+  position:absolute;
+  left:0;bottom:-5px;
+  width:100%;height:2px;
+  background:red;
+}
+
+/* ================= MUSIC ================= */
+#musicBtn{
+  position:fixed;
+  bottom:20px; right:20px;
+  background:#000;
+  border:2px solid red;
+  color:red;
+  padding:10px;
+  cursor:pointer;
+  z-index:200;
+}
+
+/* ================= TO TOP ================= */
+#topBtn{
+  position:fixed;
+  bottom:70px; right:20px;
+  background:#000;
+  border:2px solid red;
+  color:red;
+  padding:10px;
+  cursor:pointer;
+  display:none;
+  z-index:200;
+}
+
+/* ================= SECTIONS ================= */
+section{
+  padding:120px 40px;
+  text-align:center;
+}
+h1,h2{
+  color:red;
+  text-shadow:0 0 12px red;
+  margin-bottom:25px;
+}
+p{
+  max-width:900px;
+  margin:auto;
+  line-height:1.7;
+  color:#ccc;
+}
+
+/* ================= HOME ================= */
+#home{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+#home h1{font-size:3.5rem}
+
+/* ================= CARDS ================= */
+.cards{
+  display:flex;
+  gap:30px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-top:60px;
+}
+.card{
+  background:rgba(10,10,10,.9);
+  border:2px solid red;
+  width:280px;
+  padding:20px;
+  cursor:pointer;
+  transition:.4s;
+}
+.card img{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  margin-bottom:15px;
+}
+.card:hover{
+  transform:scale(1.1);
+  box-shadow:0 0 35px red;
+}
+
+/* ================= BANNER ================= */
+.banner{
+  margin-top:70px;
+}
+.banner img{
+  width:90%;
+  max-width:900px;
+  border:2px solid red;
+  box-shadow:0 0 40px rgba(255,0,0,.4);
+}
+
+/* ================= TIMELINE ================= */
+.timeline{
+  margin-top:60px;
+  border-left:3px solid red;
+  padding-left:30px;
+  max-width:800px;
+  margin-inline:auto;
+}
+.timeline div{
+  margin-bottom:30px;
+}
+
+/* ================= MODAL ================= */
+#modal{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.85);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+.modal-box{
+  background:#0a0a0a;
+  border:2px solid red;
+  padding:30px;
+  max-width:600px;
+}
+.modal-box button{
+  margin-top:20px;
+  padding:10px;
+  background:black;
+  color:red;
+  border:2px solid red;
+  cursor:pointer;
+}
+
+/* ================= ANIMAÇÃO ================= */
+.reveal{
+  opacity:0;
+  transform:translateY(50px);
+  transition:.8s;
+}
+.reveal.active{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* ================= FOOTER ================= */
+footer{
+  padding:30px;
+  background:rgba(0,0,0,.9);
+  color:red;
+  text-align:center;
+}
+
+/* ================= RESPONSIVO ================= */
+@media(max-width:768px){
+  #home h1{font-size:2.3rem}
+  nav{flex-wrap:wrap}
+}
+</style>
+</head>
+
+<body>
+
+<div id="loader"><span>Carregando...</span></div>
+
+<audio id="music" loop>
+  <source src="audio/theme-music.mp3" type="audio/mpeg">
+</audio>
+
+<button id="musicBtn">🎵 Música</button>
+<button id="topBtn">⬆ Topo</button>
+<button onclick="tocarMusica()">🎧 Ativar Trilha Sonora</button>
+
+<nav>
+  <a href="#home">Home</a>
+  <a href="#personagens">Personagens</a>
+  <a href="#historia">História</a>
+  <a href="#gameplay">Gameplay</a>
+  <a href="#san vértigo">San Vértigo</a>
+</nav>
+<section id="home" class="reveal">
+  <h1><strong>Conflitos Eternos</strong></h1>
+  <p><strong>Entre Amores e Guerras</strong></p>
+  <h2><strong>Em Desenvolvimento</strong></h2>
+  <div class="banner"><img src="Imagens/CAPA1.png"></div>
+
+<section id="personagens">
+  <h2 class="reveal">Personagens</h2>
+  <div class="cards">
+    <div class="card reveal" onclick="openModal('Jhonsonn','Soldado marcado pela guerra.')">
+      <img src="Imagens/Jhonsonn.jpg"><h3>Jhonsonn</h3>
+    </div>
+    <div class="card reveal" onclick="openModal('Elara','Esposa de Jhonsonn, Símbolo de esperança.')">
+      <img src="Imagens/Elena.jpg"><h3>Elara</h3>
+    </div>
+    <div class="card reveal" onclick="openModal('General Morduck','Ditador implacável.')">
+      <img src="Imagens/General.jpg"><h3>Morduck</h3>
+</section>
+
+<section id="historia">
+  <h2 class="reveal">História</h2>
+  <p class="reveal">Uma guerra que separou o amor e criou heróis.</p>
+<p><strong>Em um mundo consumido pela guerra e marcado pela destruição, nasce a história de Jhonsonn Maverick, um soldado reconhecido por sua coragem, disciplina e habilidades excepcionais em combate. Antes do conflito transformar tudo em cinzas, Jhonsonn levava uma vida simples e significativa ao lado de sua esposa, Elara, em uma pequena cidade pacífica no país de Valeria. A cidade era conhecida por sua cultura viva, seu povo acolhedor e pela esperança constante de um futuro seguro.
+
+A vida de Jhonsonn era guiada pelo amor, pela lealdade à sua terra e pelo desejo de proteger aquilo que mais importava. No entanto, essa tranquilidade escondia uma ameaça crescente. Um império rival, Zerathia, começava a se expandir agressivamente, movido pela ambição e pela sede de poder. No centro desse império estava Murdock, uma figura implacável, estrategista e fria, cuja visão de dominação não deixava espaço para misericórdia.
+
+Quando a guerra explode, Jhonsonn é convocado para lutar na linha de frente, acreditando que sua missão seria breve e que Valeria permaneceria protegida. Mas o conflito se revela brutal, estratégico e devastador. Ataques coordenados, cidades arrasadas e vilas inteiras destruídas se tornam parte da nova realidade daquele mundo em colapso.
+
+Em meio a explosões, tiroteios e emboscadas mortais, Jhonsonn luta não apenas por dever, mas pelo amor que deixou para trás. O silêncio entre o campo de batalha e sua terra natal começa a se tornar angustiante. Mensagens não chegam. Notícias são fragmentadas. Rumores sombrios surgem entre soldados e sobreviventes, alimentando o medo e a incerteza.
+
+Ao longo de sua jornada, Jhonsonn atravessa desertos devastados, cidades em ruínas e territórios tomados pela fumaça da guerra. Ele enfrenta inimigos implacáveis, sobrevive a traições internas e encara decisões que testam seus limites físicos e emocionais. Cada batalha o transforma, moldando sua mente e sua alma em meio ao caos.
+
+Enquanto sua reputação cresce no campo de batalha, o nome Jhonsonn Maverick passa a ser conhecido tanto como símbolo de resistência quanto como uma força implacável contra Zerathia. Do outro lado, a presença de Murdock paira como uma sombra constante, representando o coração do conflito e a origem de toda a destruição que consome o mundo.
+
+Confronto Eterno: Entre o Amor e Guerra é mais do que um jogo de ação 2D. É uma narrativa intensa sobre amor, perda, sacrifício e as consequências da guerra. Em um mundo onde a vitória pode ter um preço alto demais, o jogador é convidado a viver uma jornada profunda, emocional e inesquecível — onde cada passo ecoa o passado e cada escolha carrega o peso de um destino incerto.</strong></p>
+<div class="timeline reveal">
+  <div><strong>Início da Guerra:</strong> O império de Zerathia invade o pais Valeria, dando início ao conflito.</div>
+  <div><strong>Queda de BucsBurg:</strong> A capital de Valeria (BucsBurg) é tomada, forçando Jhonsonn a se juntar ao exercito Valeriano.</div>
+  <div><strong>Resistência Formada:</strong> Jhonsonn se junta ao exercito para lutar contra os invasores.</div>
+  <div><strong>Batalha de Eldoria:</strong> Uma batalha crucial onde Jhonsonn enfrenta Murdock pela primeira vez.</div>
+  <div><strong>Revelação do Passado:</strong> Jhonsonn descobre segredos e o que aconteceu sobre sua família e o verdadeiro motivo da guerra.</div>
+  <div><strong>Confronto Final:</strong> O confronto épico entre Jhonsonn e Murdock que decidirá o destino do mundo.</div>
+
+</section>
+<div class="banner reveal"><img src="Imagens/CAPA2.png"></div>
+<section id="gameplay">
+  <h2 class="reveal">Gameplay</h2>
+  <h2 class="reveal"><strong>⚔️ Combate 2D Dinâmico</strong></h2>
+
+<strong> Gameplay é baseada em combates em tempo real, combinando:
+
+Armas de fogo
+
+Combate corpo a corpo
+
+Movimentação ágil e fluida
+
+Os inimigos possuem comportamentos diferentes, exigindo estratégia, posicionamento e reflexos rápidos. O jogador precisa usar o cenário a seu favor, aproveitando coberturas, altura do terreno e rotas alternativas</strong>
+
+
+<h2><strong>🧠 Progressão e Evolução</strong></h2>
+
+<strong>Durante a jornada, Jhonsonn Maverick evolui conforme o jogador avança:
+
+Desbloqueio de novas habilidades
+
+Melhoria de armas
+
+Aprimoramento de resistência, força e precisão
+
+Cada melhoria reflete o crescimento do personagem dentro da guerra, tornando-o mais eficiente e adaptável aos desafios cada vez mais difíceis</strong>.
+
+
+<h2><strong>🌍 Exploração e Ambientação</strong></h2>
+
+<strong>O mundo do jogo é dividido em mapas 2D interconectados, com ambientes variados:
+
+Cidades destruídas
+
+Campos de batalha abandonados
+
+Regiões dominadas pelo inimigo
+
+A exploração recompensa o jogador com recursos, fragmentos da história e desafios opcionais que aprofundam a narrativa sem interromper o ritmo da ação</strong>.
+
+
+<h2><strong>🎯 Missões e Objetivos</strong></h2>
+
+<strong>O jogo apresenta:
+
+Missões principais focadas na narrativa
+
+Desafios secundários opcionais
+
+Confrontos estratégicos e batalhas intensas
+
+Cada missão reforça o clima de tensão, guerra e sacrifício, mantendo o jogador sempre imerso na história</strong>.
+
+
+<h2><strong>🎧 Clima e Emoção</strong></h2>
+
+<strong>A gameplay é acompanhada por:
+
+Trilha sonora intensa e melancólica
+
+Efeitos sonoros realistas
+
+Momentos silenciosos que reforçam o peso emocional da jornada
+
+Tudo foi pensado para fazer o jogador sentir o impacto da guerra, não apenas jogá-la.</strong>.</p>
+
+  <div class="banner reveal"><img src="Imagens/Gameplay2.jpg"></div>
+  <div class="banner reveal"><img src="Imagens/Gameplay3.png"></div>
+  <div class="banner reveal"><img src="Imagens/Gameplay1.png"></div>
+  <p><strong>Imagens Ilustrativas</strong></p>
+  <p><strong>Controles:</strong> <strong>Use WASD para movimentar o personagem e as setas para atacar.</strong></p>
+  <p><strong>Cuidado Para Não Viciar</strong></p>
+</section>
+
+<section id="san vértigo">
+  <h2 class="reveal">SanVertigo</h2>
+  <p class="reveal"><strong>
+
+<strong>San Vértigo foi fundada na época da Expansão Valeriana, aproximadamente no ano 1147, quando o Reino de Valeria avançava além da capital BucsBurg, situada a cerca de 50 km de distância.
+
+Diferente de outras cidades erguidas por ambição ou riqueza, San Vértigo nasceu por necessidade. Sua posição estratégica servia como ponto de descanso para viajantes, comerciantes e mensageiros que transitavam entre BucsBurg e as regiões vizinhas.
+
+Uma Cidade Comum, Mas Viva
+
+San Vértigo nunca foi uma cidade rica nem grandiosa.
+Não possuía muralhas imponentes, palácios ou tecnologias avançadas. Era formada por ruas simples, casas de pedra, pequenos mercados e praças onde todos se conheciam pelo nome.
+
+A economia girava em torno de:
+
+comércio local
+
+agricultura nas áreas próximas
+
+serviços para viajantes
+
+Era uma cidade tranquila, onde o tempo passava devagar.
+
+O Lugar Onde Tudo Começou
+
+Para o personagem principal, San Vértigo não era apenas um ponto no mapa.
+Era lar.
+
+Foi ali que ele cresceu, aprendeu valores básicos, construiu amizades e teve seus primeiros conflitos. As ruas estreitas, a praça central e as casas antigas guardam memórias que moldaram quem ele se tornaria.
+
+Cada esquina carrega uma lembrança.
+Cada rosto conhecido, uma história compartilhada.
+
+Ligação com BucsBurg
+
+Por estar próxima da capital, San Vértigo sempre viveu à sombra de BucsBurg. Decisões tomadas longe dali ainda assim afetavam a cidade, mostrando ao protagonista, desde cedo, que o mundo era maior — e mais injusto — do que seu pequeno lar.
+
+Essa proximidade foi o que, mais tarde, o empurrou para fora de San Vértigo… e deu início à sua jornada.
+
+San Vértigo Hoje
+
+San Vértigo segue sendo uma cidade simples, quase esquecida pelos grandes registros históricos.
+Mas para o personagem principal, ela representa:
+
+o ponto de partida,
+o lugar onde tudo começou,
+e para onde ele sempre pode — ou não — voltar.<strong></p>
+<div class="banner reveal"><img src="Imagens/SanVertigo.png"></div>
+    <footer>
+  <p><Strong>VoidPixel Studios©
+    2026®</Strong>
+  </p>
+</footer>
+
+<div id="modal">
+  <div class="modal-box">
+    <h3 id="modalTitle"></h3>
+    <p id="modalText"></p>
+    <button onclick="closeModal()">Fechar</button>
+  </div>
+</div>
+
+<script>
+window.onload=()=>loader.style.display="none";
+
+/* REVEAL */
+const obs=new IntersectionObserver(e=>{
+  e.forEach(i=>i.isIntersecting&&i.target.classList.add("active"));
+});
+document.querySelectorAll(".reveal").forEach(el=>obs.observe(el));
+
+/* MODAL */
+function openModal(t,txt){
+  modalTitle.innerText=t;
+  modalText.innerText=txt;
+  modal.style.display="flex";
+}
+function closeModal(){modal.style.display="none"}
+
+/* MUSIC */
+let playing=false;
+musicBtn.onclick=()=>{
+  playing?music.pause():music.play();
+  playing=!playing;
+};
+
+/* TO TOP */
+window.onscroll=()=>{
+  topBtn.style.display=window.scrollY>400?"block":"none";
+};
+topBtn.onclick=()=>window.scrollTo({top:0,behavior:"smooth"});
+const musica = document.getElementById("musica");
+
+function tocarMusica() {
+  musica.volume = 0.5;
+  musica.play();
+}
+
+</script>
+
+</body>
+</html>
